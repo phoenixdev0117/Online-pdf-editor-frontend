@@ -1,1 +1,7 @@
-# Online-pdf-editor-frontend
+# Online PDF Editor Frontend
+
+
+
+-> npm install
+
+-> npm run dev
