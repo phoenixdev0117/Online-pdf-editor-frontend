@@ -14,6 +14,7 @@ const options = {
 
 app.prepare()
   .then(() => {
+
     const server = express();
 
     server.get('*', (req, res) => {
@@ -33,6 +34,7 @@ app.prepare()
     https.createServer(options, server).listen(443, "94.72.120.252", () => {
       console.log(`Server running at https://94.72.120.252/`);
     });
+    
   })
   .catch((ex) => {
     console.error(ex.stack);
