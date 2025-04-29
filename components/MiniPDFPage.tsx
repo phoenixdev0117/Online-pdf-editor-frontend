@@ -9,21 +9,21 @@ interface MiniPDFPageProps {
 export default function MiniPDFPage(props: MiniPDFPageProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
-    let renderTask :  RenderTask|undefined;
+    let renderTask: RenderTask | undefined;
     props.doc.getPage(props.pageIndex + 1).then(function getPageHelloWorld(page) {
       const scaleFactor = 1.0 * (window.devicePixelRatio || 1);
-      const scale =  scaleFactor*props.scale;
+      const scale = scaleFactor * props.scale;
       const viewport = page.getViewport({ scale });
       const context = canvasRef.current!.getContext("2d")!;
-      context.scale(1/scaleFactor,1/scaleFactor);
+      context.scale(1 / scaleFactor, 1 / scaleFactor);
       canvasRef.current!.height = viewport.height;
       canvasRef.current!.width = viewport.width;
       renderTask = page.render({ canvasContext: context, viewport: viewport });
-      canvasRef.current!.style.height = `${viewport.height/scaleFactor}px`;
-      canvasRef.current!.style.width = `${viewport.width/scaleFactor}px`;
+      canvasRef.current!.style.height = `${viewport.height / scaleFactor}px`;
+      canvasRef.current!.style.width = `${viewport.width / scaleFactor}px`;
     })
     return () => {
-      if(renderTask){
+      if (renderTask) {
         renderTask.cancel();
       }
     }

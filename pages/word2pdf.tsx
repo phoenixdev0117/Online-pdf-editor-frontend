@@ -14,7 +14,7 @@ const Word2PDF = () => {
       setFile(event.target.files[0]);
     }
   };
-  const handleFileUpload = async () => {8
+  const handleFileUpload = async () => {
     setIsLoading(true);
     if (file) {
       const formData = new FormData();
@@ -54,7 +54,7 @@ const Word2PDF = () => {
 
   return (
     <>
-      <Header text="Convert Word to PDF Document"/>
+      <Header text="Convert Word to PDF Document" />
       <input
         aria-label="Add files"
         accept=".docx, .doc"

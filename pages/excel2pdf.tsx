@@ -53,7 +53,7 @@ const Excel2PDF = () => {
 
   return (
     <div>
-      <Header text="Convert Excel to PDF Document"/>
+      <Header text="Convert Excel to PDF Document" />
       <input
         aria-label="Add files"
         accept=".xlsx"

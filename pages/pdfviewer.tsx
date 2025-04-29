@@ -70,7 +70,7 @@ const PDFViewer = () => {
 
   return (
     <>
-      <div style={{ width: "100%", maxHeight: "100vh", overflow: "hidden" }} onClick={() => {}}>
+      <div style={{ width: "100%", maxHeight: "100vh", overflow: "hidden" }} onClick={() => { }}>
         <div
           style={{
             overflow: "hidden",
@@ -81,8 +81,8 @@ const PDFViewer = () => {
         >
           <div className='flex justify-end items-center h-[40px] mr-4'>
             <div className={`rounded-[50%] bg-white h-[25px] w-[25px] flex items-center justify-center cursor-pointer`} onClick={() => setShowProfile(!showProfile)}>
-              <div className={`select-none rounded-[50%] h-[23px] w-[23px] font-sans text-white flex items-center justify-center text-lg`} 
-                style={{backgroundColor: `${color}`}}>{username.charAt(0).toUpperCase()}</div>
+              <div className={`select-none rounded-[50%] h-[23px] w-[23px] font-sans text-white flex items-center justify-center text-lg`}
+                style={{ backgroundColor: `${color}` }}>{username.charAt(0).toUpperCase()}</div>
             </div>
           </div>
           {showProfile && <UserProfile username={username} top="45px" right="20px" />}

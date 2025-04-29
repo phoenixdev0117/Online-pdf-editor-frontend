@@ -54,7 +54,7 @@ const Image2PDF = () => {
 
   return (
     <>
-      <Header text="Convert image to PDF Document"/>
+      <Header text="Convert image to PDF Document" />
       <input
         aria-label="Add files"
         accept=".png, .jpeg, .jpg, .bmp"

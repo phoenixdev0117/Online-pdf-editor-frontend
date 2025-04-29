@@ -14,11 +14,10 @@ interface TextContentTextareaProps {
 function TextContentTextarea(props: TextContentTextareaProps) {
   return (
     <div
-      className={`w-full bg-slate-50 dark:bg-slate-700 px-2 pt-1 pb-4 text-black dark:text-white rounded-md shadow flex flex-col  ${
-        props.highlighted
+      className={`w-full bg-slate-50 dark:bg-slate-700 px-2 pt-1 pb-4 text-black dark:text-white rounded-md shadow flex flex-col  ${props.highlighted
           ? "border-2 dark:border-blue-700 border-blue-400 min-h-[15rem]"
           : "border dark:border-blue-900 min-h-[12rem]"
-      }`}
+        }`}
     >
       <div className="flex justify-between">
         <h4 className="text-blue-700 dark:text-blue-400 text-lg font-medium my-1">{props.label}</h4>
@@ -59,7 +58,7 @@ const ExtractText = () => {
 
   return (
     <>
-      <Header text="Extract text from PDF Document"/>
+      <Header text="Extract text from PDF Document" />
       <input
         aria-label="Add files"
         accept=".pdf"
