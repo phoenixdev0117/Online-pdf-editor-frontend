@@ -1,8 +1,8 @@
 import { BASE_URL } from "@/Config";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState ,useEffect } from "react";
-import {ToastContainer, toast} from "react-toastify";
+import { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function SignIn() {
@@ -33,7 +33,7 @@ export default function SignIn() {
         return () => {
             // Clean up event listeners if needed
             pwShowHide.forEach((eyeIcon) => {
-                eyeIcon.removeEventListener("click", () => {});
+                eyeIcon.removeEventListener("click", () => { });
             });
         };
     }, []);
@@ -59,7 +59,7 @@ export default function SignIn() {
                 }),
             })
                 .then((response) => {
-                    if(response.ok) {
+                    if (response.ok) {
                         toast.success('🦄 Successfully Logined!', {
                             position: "top-right",
                             autoClose: 5000,
@@ -69,7 +69,7 @@ export default function SignIn() {
                             draggable: true,
                             progress: undefined,
                             theme: "light",
-                            });;
+                        });;
                         return response.json();
                     } else {
                         toast.error('Failed to login!', {
@@ -81,7 +81,7 @@ export default function SignIn() {
                             draggable: true,
                             progress: undefined,
                             theme: "light",
-                            });
+                        });
                         document.getElementById("email")?.focus();
                         setFormData({
                             'email': '',
@@ -90,7 +90,7 @@ export default function SignIn() {
                     }
                 })
                 .then((data) => {
-                    const {token, color, username} = data;
+                    const { token, color, username } = data;
                     localStorage.setItem("color", color);
                     localStorage.setItem("username", username);
                     localStorage.setItem("login-token", token);
@@ -107,7 +107,7 @@ export default function SignIn() {
         <div className="auth auth-container auth-forms">
             <Head>
                 <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet' />
-            </Head>            
+            </Head>
             <div className="auth auth-form login">
                 <div className="auth auth-form-content">
                     <header className="auth auth-header">Login</header>

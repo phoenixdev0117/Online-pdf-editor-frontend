@@ -8,7 +8,7 @@ import {
   PDFNumber,
   PDFPageLeaf,
   PDFRef,
-  PDFString
+  PDFString,
 } from "@cantoo/pdf-lib";
 
 export function getAllPageRefs(pdfDoc: PDFDocument) {
@@ -22,11 +22,16 @@ export function getAllPageRefs(pdfDoc: PDFDocument) {
 }
 
 export function getNamedDestinations(doc: PDFDocument) {
-  const names = doc.context.lookup(doc.catalog.get(PDFName.of("Names")), PDFDict);
+  const names = doc.context.lookup(
+    doc.catalog.get(PDFName.of("Names")),
+    PDFDict
+  );
   const dests = doc.context.lookup(names.get(PDFName.of("Dests")), PDFDict);
   const pageRefs = doc.getPages().map((p) => p.ref);
   function getAllKidsRec(e: PDFDict) {
-    const destKids: PDFArray | undefined = e.get(PDFName.of("Kids")) as PDFArray | undefined;
+    const destKids: PDFArray | undefined = e.get(PDFName.of("Kids")) as
+      | PDFArray
+      | undefined;
     if (destKids !== undefined) {
       const ret: PDFDict[] = [];
       for (const d of destKids.asArray()) {
@@ -49,15 +54,22 @@ export function getNamedDestinations(doc: PDFDocument) {
     }
   }
   const res = getAllKidsRec(dests);
-  const resNames = res.map((r) => r.get(PDFName.of("Names")) as PDFArray | undefined);
-  const namedDestMap = new Map<string, { destEntry: PDFDict; pageIndex: number }>();
+  const resNames = res.map(
+    (r) => r.get(PDFName.of("Names")) as PDFArray | undefined
+  );
+  const namedDestMap = new Map<
+    string,
+    { destEntry: PDFDict; pageIndex: number }
+  >();
   for (const entries of resNames) {
     if (entries !== undefined) {
       for (let i = 0; i < entries.size(); i += 2) {
         const tmp = doc.context.lookup(entries.get(i + 1));
         if (tmp !== undefined && tmp instanceof PDFDict) {
           const destEntry = tmp;
-          const pageIndex = pageRefs.indexOf(destEntry.lookup(PDFName.of("D"), PDFArray).asArray()[0] as PDFRef);
+          const pageIndex = pageRefs.indexOf(
+            destEntry.lookup(PDFName.of("D"), PDFArray).asArray()[0] as PDFRef
+          );
           namedDestMap.set(entries.get(i).toString(), { destEntry, pageIndex });
         }
       }
@@ -100,7 +112,9 @@ function parseOutlineRecursive(doc: PDFDocument, firstEl: PDFDict) {
   while (el !== undefined) {
     let title: string | undefined = undefined;
     if (el.has(PDFName.of("Title"))) {
-      title = (el.lookup(PDFName.of("Title")) as PDFHexString | PDFString).decodeText();
+      title = (
+        el.lookup(PDFName.of("Title")) as PDFHexString | PDFString
+      ).decodeText();
     }
     let dest: PDFArray | undefined = undefined;
     if (el.has(PDFName.of("Dest"))) {
@@ -133,8 +147,13 @@ export type ParsedOutlineItem = {
   children?: ParsedOutlineItem[];
 };
 
-export const MERGED_OUTLINE_MODES = { "retainOutlineAsOneEntry": "Retain outline entries as one entry per file", "retainOutlineEntries": "Retain outline entries", "oneEntryPerFile": "Create one outline entry per file", "none": "Don't create an outline" } as const;
-export type MergedOutlineMode = keyof (typeof MERGED_OUTLINE_MODES);
+export const MERGED_OUTLINE_MODES = {
+  retainOutlineAsOneEntry: "Retain outline entries as one entry per file",
+  retainOutlineEntries: "Retain outline entries",
+  oneEntryPerFile: "Create one outline entry per file",
+  none: "Don't create an outline",
+} as const;
+export type MergedOutlineMode = keyof typeof MERGED_OUTLINE_MODES;
 
 export function parseOutline(
   doc: PDFDocument,
@@ -148,11 +167,15 @@ export function parseOutline(
   if (mode === "oneEntryPerFile") {
     return [{ title: title, page: startPage }];
   }
-  let namedDestsMap: Map<string, { destEntry: PDFDict; pageIndex: number }> = new Map();
+  let namedDestsMap: Map<string, { destEntry: PDFDict; pageIndex: number }> =
+    new Map();
   try {
     namedDestsMap = getNamedDestinations(doc);
   } catch (e) {
-    console.log("No named destinations found. This is not necessarily an error!", e);
+    console.log(
+      "No named destinations found. This is not necessarily an error!",
+      e
+    );
   }
   if (!doc.catalog.has(PDFName.of("Outlines"))) {
     if (mode === "retainOutlineEntries") {
@@ -164,9 +187,17 @@ export function parseOutline(
   }
 
   const outlineEl = doc.catalog.lookup(PDFName.of("Outlines"), PDFDict);
-  const outline = parseOutlineRecursive(doc, outlineEl.lookup(PDFName.of("First"), PDFDict));
+  const outline = parseOutlineRecursive(
+    doc,
+    outlineEl.lookup(PDFName.of("First"), PDFDict)
+  );
   const pageRefs = doc.getPages().map((p) => p.ref);
-  const processedOutline = addPageNumbers(outline, startPage, pageRefs, namedDestsMap);
+  const processedOutline = addPageNumbers(
+    outline,
+    startPage,
+    pageRefs,
+    namedDestsMap
+  );
   if (mode === "retainOutlineEntries") {
     return processedOutline;
   }
@@ -185,7 +216,9 @@ function addPageNumbers(
   return outline.map((outEl) => ({
     ...outEl,
     page: determinePage(outEl, pageRefs, namedDestsMap) + startPage,
-    children: outEl.children ? addPageNumbers(outEl.children, startPage, pageRefs, namedDestsMap) : undefined,
+    children: outEl.children
+      ? addPageNumbers(outEl.children, startPage, pageRefs, namedDestsMap)
+      : undefined,
   }));
 }
 
@@ -216,7 +249,10 @@ function determinePage(
         if (namedDestsMap.has(`(${d})`)) {
           return namedDestsMap.get(`(${d})`)!.pageIndex;
         }
-        console.error("Outline item destination not found in destiantion map", d);
+        console.error(
+          "Outline item destination not found in destiantion map",
+          d
+        );
         return -1;
       } else {
         console.error("Unknown outline item action (Not GoTo)");
@@ -227,7 +263,11 @@ function determinePage(
   }
 }
 
-export function writeOutlineToDoc(doc: PDFDocument, outline: ParsedOutlineItem[], parentRef: PDFRef | undefined = undefined) {
+export function writeOutlineToDoc(
+  doc: PDFDocument,
+  outline: ParsedOutlineItem[],
+  parentRef: PDFRef | undefined = undefined
+) {
   const pageRefs = getAllPageRefs(doc);
   let parent: PDFRef | undefined = parentRef;
   if (parent === undefined) {
@@ -238,12 +278,19 @@ export function writeOutlineToDoc(doc: PDFDocument, outline: ParsedOutlineItem[]
   const outlineItems: PDFDict[] = [];
   for (let i = 0; i < outline.length; i++) {
     if (outline[i].page === undefined || outline[i].page! < 0) {
-      console.error("No page associated with item. Skipping!", outline[i].title);
+      console.error(
+        "No page associated with item. Skipping!",
+        outline[i].title
+      );
       continue;
     }
     let childRefs: PDFRef[] = [];
     if (outline[i].children !== undefined) {
-      childRefs = writeOutlineToDoc(doc, outline[i].children!, outlineItemRefs[i]);
+      childRefs = writeOutlineToDoc(
+        doc,
+        outline[i].children!,
+        outlineItemRefs[i]
+      );
     }
     const isLast = i == outline.length - 1;
     let nextOrPrev: PDFRef;
@@ -251,7 +298,7 @@ export function writeOutlineToDoc(doc: PDFDocument, outline: ParsedOutlineItem[]
       // Only me, myself, and I
       nextOrPrev = outlineItemRefs[0];
     } else {
-      nextOrPrev = isLast ? outlineItemRefs[i - 1] : outlineItemRefs[i + 1]
+      nextOrPrev = isLast ? outlineItemRefs[i - 1] : outlineItemRefs[i + 1];
     }
     const outlineItem = createOutlineItem(
       doc,
@@ -269,10 +316,19 @@ export function writeOutlineToDoc(doc: PDFDocument, outline: ParsedOutlineItem[]
     const outlinesDictMap = new Map();
     outlinesDictMap.set(PDFName.Type, PDFName.of("Outlines"));
     outlinesDictMap.set(PDFName.of("First"), outlineItemRefs[0]);
-    outlinesDictMap.set(PDFName.of("Last"), outlineItemRefs[outlineItemRefs.length - 1]);
-    outlinesDictMap.set(PDFName.of("Count"), PDFNumber.of(outlineItemRefs.length));
+    outlinesDictMap.set(
+      PDFName.of("Last"),
+      outlineItemRefs[outlineItemRefs.length - 1]
+    );
+    outlinesDictMap.set(
+      PDFName.of("Count"),
+      PDFNumber.of(outlineItemRefs.length)
+    );
     doc.catalog.set(PDFName.of("Outlines"), parent);
-    const outlineDict = PDFDict.fromMapWithContext(outlinesDictMap, doc.context);
+    const outlineDict = PDFDict.fromMapWithContext(
+      outlinesDictMap,
+      doc.context
+    );
     doc.context.assign(parent, outlineDict);
   }
 

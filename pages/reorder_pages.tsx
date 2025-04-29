@@ -30,7 +30,7 @@ const ReorderPages = () => {
 
     if (pdfDocument.current) {
       const firstPage = pdfDocument.current.getPages()[0];
-      const {width, height} = firstPage.getSize();
+      const { width, height } = firstPage.getSize();
       pdfDocument.current.insertPage(position, [width, height]);
       const modifiedPdfBytes = await pdfDocument.current.save();
       const modifiedPdfUrl = URL.createObjectURL(new Blob([modifiedPdfBytes], { type: 'application/pdf' }));
